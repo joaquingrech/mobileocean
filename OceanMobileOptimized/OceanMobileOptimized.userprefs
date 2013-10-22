@@ -1,0 +1,14 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Ocean\Ocean Sources\Boyancy.cs">
+    <Files>
+      <File FileName="Assets\Ocean\Ocean Sources\Boyancy.cs" Line="13" Column="6" />
+      <File FileName="Assets\Ocean\Ocean Sources\Ocean.cs" Line="484" Column="82" />
+      <File FileName="Assets\Editor\OceanGeneratorInspector.cs" Line="15" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
