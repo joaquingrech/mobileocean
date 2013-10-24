@@ -13,7 +13,7 @@ using System.Collections;
 public class Wind : MonoBehaviour {
 
 	public float humidity;
-	public float waveSacale = 4;
+	public float waveScale = 4;
 	private Ocean ocean;
 	public bool forceStorm = false;
 	
@@ -35,7 +35,7 @@ public class Wind : MonoBehaviour {
     		    humidity = GetHumidity();
 			
 			if(ocean != null)
-			    ocean.SetWaves(Mathf.Lerp(0, waveSacale, humidity));
+			    ocean.SetWaves(Mathf.Lerp(0, waveScale, humidity));
 		}
 	}
 	

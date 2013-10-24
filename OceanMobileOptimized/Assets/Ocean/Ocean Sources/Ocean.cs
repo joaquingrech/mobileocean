@@ -32,6 +32,8 @@ public class Ocean : MonoBehaviour
 	public float wakeDistance = 5f;
 	public Vector3 size = new Vector3 (150.0f, 1.0f, 150.0f);
 	public int tiles = 2;
+	public GameObject parentTile;
+	public GameObject [] tileList;
 	private float pWindx=10.0f;
 	public float windx {
 		get {
@@ -198,6 +200,7 @@ public class Ocean : MonoBehaviour
 			tiles_LOD.Add (new List<Mesh>());
 		}
 
+		GameObject parentTile=new GameObject("ParentTile");
 		GameObject tile;
 		//int chDist; // Chebychev distance	
 		for (int y=0; y<tiles; y++) {
@@ -209,7 +212,7 @@ public class Ocean : MonoBehaviour
 				tile = new GameObject ("WaterTile");
 				Vector3 pos=tile.transform.position;
 				pos.x = cx * size.x;
-				pos.y = transform.position.y;
+				pos.y = 0f;
 				pos.z = cy * size.z;
 				tile.transform.position=pos;
 				tile.AddComponent (typeof(MeshFilter));
@@ -218,7 +221,7 @@ public class Ocean : MonoBehaviour
 			
 				//Make child of this object, so we don't clutter up the
 				//scene hierarchy more than necessary.
-				tile.transform.parent = transform;
+				tile.transform.parent = parentTile.transform;
 			
 				//Also we don't want these to be drawn while doing refraction/reflection passes,
 				//so we'll add the to the water layer for easy filtering.
@@ -244,6 +247,12 @@ public class Ocean : MonoBehaviour
 			EnableReflection(false);
 		else
 			EnableReflection(true);
+
+		parentTile.transform.parent=this.transform;
+		parentTile.transform.localPosition=Vector3.zero;
+		foreach (Transform g in parentTile.GetComponentsInChildren<Transform>())
+			g.parent=this.transform;
+		DestroyImmediate(parentTile);
 	}
 	
 	void InitWaveGenerator() {
