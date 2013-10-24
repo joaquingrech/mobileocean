@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
@@ -57,6 +58,10 @@ public class OceanGeneratorInspector : Editor
 		    GUILayout.Space(-80);
 		    ocean.height = EditorGUILayout.IntField(ocean.height);
 		    EditorGUILayout.EndHorizontal();
+			if (GUILayout.Button("Preview Dimensions"))
+			{
+			OceanGeneratorInspector.createTiles(ocean);
+			}
 		
 		EditorGUILayout.Separator();
 		
@@ -144,7 +149,76 @@ public class OceanGeneratorInspector : Editor
             EditorUtility.SetDirty (ocean);
         }	
 	}
-	
+
+	private static Mesh CreateMesh(float width, float height)
+	{
+		Mesh m = new Mesh();
+		m.name = "ScriptedMesh";
+		m.vertices = new Vector3[] {
+			new Vector3(-width, 0.01f, -height),
+			new Vector3(width, 0.01f, -height),
+			new Vector3(width, 0.01f, height),
+			new Vector3(-width, 0.01f, height)
+		};
+		m.uv = new Vector2[] {
+			new Vector2 (0, 0),
+			new Vector2 (0, 1),
+			new Vector2(1, 1),
+			new Vector2 (1, 0)
+		};
+		m.triangles = new int[] { 0, 2, 1, 0, 3, 2};
+		m.RecalculateNormals();
+		
+		return m;
+	}
+
+	private static void createTiles(Ocean ocean) {
+
+	//	int width=ocean.width;
+	//	int height=ocean.height;
+		Vector3 size=ocean.size;
+		int tiles=ocean.tiles;
+
+		if (ocean.parentTile!=null) {
+			DestroyImmediate(ocean.parentTile);
+			ocean.parentTile=null;
+		}
+		GameObject parentTile=new GameObject("ParentTile");
+		GameObject tile;
+		//int chDist; // Chebychev distance	
+		for (int y=0; y<tiles; y++) {
+			for (int x=0; x<tiles; x++) {
+				//chDist = System.Math.Max (System.Math.Abs (tiles_y / 2 - y), System.Math.Abs (tiles_x / 2 - x));
+				//chDist = chDist > 0 ? chDist - 1 : 0;
+				float cy = y - Mathf.Floor(tiles * 0.5f);
+				float cx = x - Mathf.Floor(tiles * 0.5f);
+				tile = new GameObject ("WaterTile");
+				Vector3 pos=tile.transform.position;
+				pos.x = cx * size.x;
+				pos.y = 0f;
+				pos.z = cy * size.z;
+				tile.transform.position=pos;
+				MeshFilter m=tile.AddComponent<MeshFilter>();
+				m.mesh=CreateMesh(size.x,size.z);
+
+				tile.AddComponent ("MeshRenderer");
+				tile.renderer.material = ocean.material;
+				
+				//Make child of this object, so we don't clutter up the
+				//scene hierarchy more than necessary.
+				tile.transform.parent = parentTile.transform;
+				
+				//Also we don't want these to be drawn while doing refraction/reflection passes,
+				//so we'll add the to the water layer for easy filtering.
+				tile.layer = LayerMask.NameToLayer ("Water");
+			}
+		}
+
+		parentTile.transform.parent=ocean.transform;
+		parentTile.transform.localPosition=Vector3.zero;
+		ocean.parentTile=parentTile;
+	}
+
 	public static int LayerMaskField (string label, int mask, params GUILayoutOption[] options)
 	{
 		List<string> layers = new List<string>();
